@@ -23,8 +23,10 @@ class _FormsScreenState extends State<FormsScreen> {
   // Profile Image
   File? _profileImage;
 
-  // Works Section
-  List<Map<String, dynamic>> _works = [];
+  // Works Section - Initialize with one default work form
+  final List<Map<String, dynamic>> _works = [
+    {'image': null, 'title': '', 'description': ''}
+  ];
 
   // Languages and Tools
   final List<String> _tools = [
@@ -66,7 +68,7 @@ class _FormsScreenState extends State<FormsScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Create Portfolio'),
-         centerTitle: true,
+        centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: SingleChildScrollView(
@@ -98,13 +100,9 @@ class _FormsScreenState extends State<FormsScreen> {
                 // Name Text Field
                 TextFormField(
                   controller: _nameController,
-                  
                   decoration: const InputDecoration(
                     labelText: 'Name',
-                    filled: true,
-                    fillColor: Color(0xFFF5F5F5),
                     border: OutlineInputBorder(
-                      //borderSide: BorderSide.none,
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
                   ),
@@ -160,11 +158,14 @@ class _FormsScreenState extends State<FormsScreen> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
+
+               
                 ..._works.asMap().entries.map((entry) {
                   int index = entry.key;
                   Map<String, dynamic> work = entry.value;
                   return _buildWorkItem(index, work);
-                }).toList(),
+                }),
+
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: _addWork,
@@ -242,7 +243,7 @@ class _FormsScreenState extends State<FormsScreen> {
   Widget _buildWorkItem(int index, Map<String, dynamic> work) {
     return Column(
       children: [
-        Row(
+        Column(
           children: [
             GestureDetector(
               onTap: () async {
@@ -266,14 +267,12 @@ class _FormsScreenState extends State<FormsScreen> {
               ),
             ),
             const SizedBox(width: 16),
-            Expanded(
-              child: TextFormField(
-                initialValue: work['title'],
-                decoration: const InputDecoration(labelText: 'Title'),
-                onChanged: (value) {
-                  _works[index]['title'] = value;
-                },
-              ),
+            TextFormField(
+              initialValue: work['title'],
+              decoration: const InputDecoration(labelText: 'Title'),
+              onChanged: (value) {
+                _works[index]['title'] = value;
+              },
             ),
           ],
         ),
