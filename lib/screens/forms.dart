@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:portfolio_app/screens/homescreen.dart';
 import 'package:ionicons/ionicons.dart';
 
 class FormsScreen extends StatefulWidget {
@@ -15,20 +14,15 @@ class FormsScreen extends StatefulWidget {
 class _FormsScreenState extends State<FormsScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers for text fields
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _roleController = TextEditingController();
   final TextEditingController _aboutController = TextEditingController();
 
-  // Profile Image
   File? _profileImage;
-
-  // Works Section - Initialize with one default work form
   final List<Map<String, dynamic>> _works = [
     {'image': null, 'title': '', 'description': ''}
   ];
 
-  // Languages and Tools
   final List<String> _tools = [
     "Bootstrap",
     "Chart.js",
@@ -43,7 +37,6 @@ class _FormsScreenState extends State<FormsScreen> {
   ];
   final List<String> _selectedTools = [];
 
-  // Select Image
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -55,7 +48,6 @@ class _FormsScreenState extends State<FormsScreen> {
     }
   }
 
-  // Add Work
   void _addWork() {
     setState(() {
       _works.add({'image': null, 'title': '', 'description': ''});
@@ -64,12 +56,15 @@ class _FormsScreenState extends State<FormsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Create Portfolio'),
+        title: const Text('Create Portfolio',style: TextStyle(color: Colors.white),),
         centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        backgroundColor: theme.primaryColor,
+       elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -79,106 +74,63 @@ class _FormsScreenState extends State<FormsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Profile Section
                 Center(
                   child: GestureDetector(
                     onTap: _pickImage,
                     child: CircleAvatar(
                       backgroundColor: Color(0xFFF5F5F5),
-                      radius: 50,
+                      radius: 60,
                       backgroundImage: _profileImage != null
                           ? FileImage(_profileImage!)
                           : null,
                       child: _profileImage == null
-                          ? Icon(Ionicons.camera_outline, size: 40)
+                          ? Icon(Ionicons.camera_outline, size: 40, color: theme.primaryColor)
                           : null,
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-
-                // Name Text Field
-                TextFormField(
+                const SizedBox(height: 24),
+                _buildTextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
-                    }
-                    return null;
-                  },
+                  label: 'Name',
+                  hintText: 'Enter your full name',
                 ),
                 const SizedBox(height: 16),
-
-                // Role Text Field
-                TextFormField(
+                _buildTextField(
                   controller: _roleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Role',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your role';
-                    }
-                    return null;
-                  },
+                  label: 'Role',
+                  hintText: 'Enter your professional role',
                 ),
                 const SizedBox(height: 16),
-
-                // About Text Field
-                TextFormField(
+                _buildTextField(
                   controller: _aboutController,
-                  decoration: const InputDecoration(
-                    labelText: 'About',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
+                  label: 'About',
+                  hintText: 'Write a brief description about yourself',
                   maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please provide an "About" description';
-                    }
-                    return null;
-                  },
                 ),
-                const SizedBox(height: 16),
-
-                // Works Section
-                const Text(
-                  "Works",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-
-               
+                const SizedBox(height: 24),
+                Text("Works", style: theme.textTheme.titleLarge),
+                const SizedBox(height: 12),
                 ..._works.asMap().entries.map((entry) {
                   int index = entry.key;
                   Map<String, dynamic> work = entry.value;
                   return _buildWorkItem(index, work);
                 }),
-
-                const SizedBox(height: 8),
-                ElevatedButton(
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
                   onPressed: _addWork,
-                  child: const Text('Add Work'),
+                  icon: const Icon(Ionicons.add_circle_outline),
+                  label: const Text('Add Work'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 16),
-
-                // Languages and Tools Section
-                const Text(
-                  "Languages and Tools",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 24),
+                Text("Languages and Tools", style: theme.textTheme.titleLarge),
+                const SizedBox(height: 12),
                 Wrap(
                   spacing: 8.0,
                   runSpacing: 8.0,
@@ -187,6 +139,9 @@ class _FormsScreenState extends State<FormsScreen> {
                     return ChoiceChip(
                       label: Text(tool),
                       selected: isSelected,
+                      labelStyle: TextStyle(
+                        color: isSelected ? Colors.white : Colors.black,
+                      ),
                       onSelected: (selected) {
                         setState(() {
                           if (selected) {
@@ -196,16 +151,15 @@ class _FormsScreenState extends State<FormsScreen> {
                           }
                         });
                       },
+                      selectedColor: theme.primaryColor,
+                      backgroundColor: Colors.white,
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 16),
-
-                // Submit Button
+                const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Collect form data
                       final formData = {
                         'name': _nameController.text,
                         'role': _roleController.text,
@@ -214,23 +168,16 @@ class _FormsScreenState extends State<FormsScreen> {
                         'works': _works,
                         'profileImage': _profileImage,
                       };
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PortfolioScreen(
-                            name: formData['name']! as String,
-                            role: formData['role']! as String,
-                            about: formData['about']! as String,
-                            languages: formData['languages'] as List<String>,
-                            works: formData['works'] as List<Map<String, dynamic>>,
-                            profileImage: formData['profileImage'] as File?,
-                          ),
-                        ),
-                      );
+                      // Navigate or handle form submission
                     }
                   },
                   child: const Text('Update Portfolio'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -240,10 +187,40 @@ class _FormsScreenState extends State<FormsScreen> {
     );
   }
 
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    String? hintText,
+    int maxLines = 1,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hintText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        filled: true,
+        fillColor: Color(0xFFF5F5F5),
+      ),
+      maxLines: maxLines,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter $label';
+        }
+        return null;
+      },
+    );
+  }
+
   Widget _buildWorkItem(int index, Map<String, dynamic> work) {
-    return Column(
-      children: [
-        Column(
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           children: [
             GestureDetector(
               onTap: () async {
@@ -258,35 +235,33 @@ class _FormsScreenState extends State<FormsScreen> {
                 }
               },
               child: Container(
-                width: 60,
-                height: 60,
-                color: Colors.grey.shade300,
+                width: double.infinity,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: work['image'] != null
                     ? Image.file(work['image'], fit: BoxFit.cover)
-                    : const Icon(Icons.camera_alt),
+                    : const Icon(Icons.camera_alt, size: 40),
               ),
             ),
-            const SizedBox(width: 16),
-            TextFormField(
-              initialValue: work['title'],
-              decoration: const InputDecoration(labelText: 'Title'),
-              onChanged: (value) {
-                _works[index]['title'] = value;
-              },
+            const SizedBox(height: 16),
+            _buildTextField(
+              controller: TextEditingController(text: work['title']),
+              label: 'Title',
+              hintText: 'Enter work title',
+            ),
+            const SizedBox(height: 12),
+            _buildTextField(
+              controller: TextEditingController(text: work['description']),
+              label: 'Description',
+              hintText: 'Enter work description',
+              maxLines: 2,
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        TextFormField(
-          initialValue: work['description'],
-          decoration: const InputDecoration(labelText: 'Description'),
-          maxLines: 2,
-          onChanged: (value) {
-            _works[index]['description'] = value;
-          },
-        ),
-        const Divider(),
-      ],
+      ),
     );
   }
 }
