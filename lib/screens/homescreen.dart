@@ -6,6 +6,9 @@ class PortfolioScreen extends StatelessWidget {
   final String name;
   final String role;
   final String about;
+  final String address;
+  final String phone;
+  final String email;
   final List<String> languages;
   final List<Map<String, dynamic>> works;
   final File? profileImage;
@@ -18,6 +21,9 @@ class PortfolioScreen extends StatelessWidget {
     required this.languages,
     required this.works,
     required this.profileImage,
+    required this.address,
+    required this.phone,
+    required this.email,
   });
 
   @override
@@ -34,10 +40,9 @@ class PortfolioScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Section
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.amber,
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding: const EdgeInsets.all(16),
@@ -60,6 +65,7 @@ class PortfolioScreen extends StatelessWidget {
                           name,
                           style: const TextStyle(
                             fontSize: 20,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -67,7 +73,7 @@ class PortfolioScreen extends StatelessWidget {
                           role,
                           style: const TextStyle(
                             fontSize: 14,
-                            color: Colors.black54,
+                            color: Colors.white,
                           ),
                         ),
                       ],
@@ -76,10 +82,8 @@ class PortfolioScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // About Section
               const Text(
-                "About:",
+                "About",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -91,12 +95,8 @@ class PortfolioScreen extends StatelessWidget {
                 style: const TextStyle(fontSize: 14, color: Colors.black87),
               ),
               const SizedBox(height: 16),
-
-              // Divider Section
               const Divider(thickness: 1, color: Colors.black12),
               const SizedBox(height: 16),
-
-              // Works Section
               const Text(
                 "Works",
                 style: TextStyle(
@@ -106,7 +106,8 @@ class PortfolioScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               SizedBox(
-                height: 200, // Set a fixed height for the horizontal list
+                height: 200,
+                width: double.infinity,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: works.length,
@@ -114,43 +115,70 @@ class PortfolioScreen extends StatelessWidget {
                     final work = works[index];
                     return Padding(
                       padding: const EdgeInsets.only(right: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (work['image'] != null)
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.file(
-                                work['image'],
-                                height: 120,
-                                width: 180,
-                                fit: BoxFit.cover,
+                      child: SizedBox(
+                        height: 200,
+                        width: 200,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (work['image'] != null)
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.file(
+                                  work['image'],
+                                  height: 120,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            const SizedBox(height: 8),
+                            Text(
+                              work['title'] ?? '',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
                               ),
                             ),
-                          const SizedBox(height: 8),
-                          Text(
-                            work['title'] ?? '',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                            const SizedBox(height: 4),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Text(
+                                  work['description'] ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                          Text(
-                            work['description'] ?? '',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Languages and Tools Section
+              const Text(
+                "Contact info",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                address,
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
+              Text(
+                email,
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
+              Text(
+                phone,
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
+              const SizedBox(height: 16),
               const Text(
                 "Languages and Tools:",
                 style: TextStyle(
@@ -180,7 +208,6 @@ class PortfolioScreen extends StatelessWidget {
   }
 
   Widget _buildToolIcon(String toolName) {
-    // Map of tool names to their respective icon URLs
     final Map<String, String> toolIcons = {
       "Bootstrap": "https://cdn-icons-png.flaticon.com/512/5968/5968672.png",
       "Chart.js": "https://cdn-icons-png.flaticon.com/512/4701/4701482.png",
@@ -194,7 +221,6 @@ class PortfolioScreen extends StatelessWidget {
       "Python": "https://cdn-icons-png.flaticon.com/512/5968/5968350.png",
     };
 
-    // Fallback in case an icon URL is not found
     final iconUrl =
         toolIcons[toolName] ?? "https://via.placeholder.com/64?text=No+Icon";
 
@@ -206,11 +232,11 @@ class PortfolioScreen extends StatelessWidget {
           height: 50,
         ),
         const SizedBox(height: 4),
-        Text(
-          toolName,
-          style: const TextStyle(fontSize: 12),
-          textAlign: TextAlign.center,
-        ),
+        // Text(
+        //   toolName,
+        //   style: const TextStyle(fontSize: 12),
+        //   textAlign: TextAlign.center,
+        // ),
       ],
     );
   }
