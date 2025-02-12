@@ -4,7 +4,10 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:ionicons/ionicons.dart';
 import 'package:portfolio_app/screens/ai_generator.dart';
+import 'package:portfolio_app/screens/constant.dart';
+import 'package:portfolio_app/screens/custom_container.dart';
 import 'package:portfolio_app/screens/markdown.dart';
+import 'package:iconsax/iconsax.dart';
 
 class FormsScreen extends StatefulWidget {
   const FormsScreen({super.key});
@@ -25,21 +28,20 @@ class FormsScreenState extends State<FormsScreen> {
 
   File? _profileImage;
   final List<Map<String, dynamic>> _works = [];
+  final List<Map<String, dynamic>> _education = [];
   final List<TextEditingController> _titleControllers = [];
   final List<TextEditingController> _descriptionControllers = [];
   final List<TextEditingController> _companyControllers = [];
+  final List<TextEditingController> _schoolControllers = [];
+  final List<TextEditingController> _programmeControllers = [];
 
   final List<String> _skills = [
-    "Bootstrap",
-    "Chart.js",
-    "Docker",
+    "Microsft Suite",
+    "HTML & CSS",
     "Git",
-    "HTML",
-    "JS",
-    "TS",
-    "MongoDB",
+    "WordPress" ,
+    "Adobe photoshop",
     "MySQL",
-    "Python"
   ];
   final List<String> _selectedTools = [];
 
@@ -58,7 +60,13 @@ class FormsScreenState extends State<FormsScreen> {
       controller.dispose();
     }
     for (var controller in _companyControllers) {
-       controller.dispose();
+      controller.dispose();
+    }
+    for (var controller in _schoolControllers) {
+      controller.dispose();
+    }
+    for (var controller in _programmeControllers) {
+      controller.dispose();
     }
     super.dispose();
   }
@@ -74,12 +82,30 @@ class FormsScreenState extends State<FormsScreen> {
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _addWork();
+    _addEducation();
+  }
+
+  void _addEducation() {
+    setState(() {
+      _education.add({
+        'school name': '',
+        'programme': '',
+      });
+      _schoolControllers.add(TextEditingController());
+      _programmeControllers.add(TextEditingController());
+    });
+  }
+
   void _addWork() {
     setState(() {
       _works.add({
-        'company name':'',
-        'job title':'',
-        'job description':'',
+        'company name': '',
+        'job title': '',
+        'job description': '',
       });
       _titleControllers.add(TextEditingController());
       _descriptionControllers.add(TextEditingController());
@@ -90,11 +116,17 @@ class FormsScreenState extends State<FormsScreen> {
   void _removeWork(int index) {
     setState(() {
       _works.removeAt(index);
+      _education.removeAt(index);
       _titleControllers[index].dispose();
       _descriptionControllers[index].dispose();
+      _companyControllers[index].dispose();
+      _schoolControllers[index].dispose();
+      _programmeControllers[index].dispose();
       _titleControllers.removeAt(index);
       _descriptionControllers.removeAt(index);
       _companyControllers.removeAt(index);
+      _schoolControllers.removeAt(index);
+      _programmeControllers.removeAt(index);
     });
   }
 
@@ -105,10 +137,10 @@ class FormsScreenState extends State<FormsScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Create Portfolio',
-            style: TextStyle(color: Colors.white)),
+            style: TextStyle(color: Colors.black)),
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: theme.primaryColor,
+        backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -132,7 +164,7 @@ class FormsScreenState extends State<FormsScreen> {
                               : null,
                           child: _profileImage == null
                               ? Icon(Ionicons.camera_outline,
-                                  size: 40, color: theme.primaryColor)
+                                  size: 40, color: Colors.black)
                               : null,
                         ),
                       ),
@@ -140,72 +172,101 @@ class FormsScreenState extends State<FormsScreen> {
                     Text('Upload profile picture')
                   ],
                 ),
-                const SizedBox(height: 24),
-                _buildTextField(
-                  controller: _nameController,
-                  label: 'Name',
-                  hintText: 'Enter your full name',
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _roleController,
-                  label: 'Role',
-                  hintText: 'Enter your professional role',
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _aboutController,
-                  label: 'About',
-                  hintText: 'Write a brief description about yourself',
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 24),
-                Text("Working Experience", style: theme.textTheme.titleLarge),
-                const SizedBox(height: 12),
-                // ..._works.asMap().entries.map((entry) {
-                //   int index = entry.key;
-                //   return _buildWorkItem(index);
-                // }),
-                const SizedBox(height: 12),
-             
-                ..._works.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  return _buildWorkItem(index);
-                }),
-                   ElevatedButton(
-                  onPressed: _addWork,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                maxHeight,
+                Text("Personal Info", style: bigHeader),
+                minHeight,
+                CustomContainer(
+                    child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(children: [
+                    _buildTextField(
+                      controller: _nameController,
+                      label: 'Name',
+                    ),
+                    minHeight,
+                    _buildTextField(
+                      controller: _roleController,
+                      label: 'Role',
+                    ),
+                    minHeight,
+                    _buildTextField(
+                      controller: _aboutController,
+                      label: 'About',
+                      maxLines: 3,
+                    ),
+                  ]),
+                )),
+                maxHeight,
+                Text("Working Experience", style: bigHeader),
+                minHeight,
+                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                  ..._works.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    return _buildWorkItem(index);
+                  }),
+                  minHeight,
+                  ElevatedButton(
+                    onPressed: _addWork,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('Add Work',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                ]),
+                maxHeight,
+                Text("Education background", style: bigHeader),
+                minHeight,
+                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                  ..._education.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    return _buildEducationItem(index);
+                  }),
+                  minHeight,
+                  ElevatedButton(
+                    onPressed: _addEducation,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('Add Education',
+                        style: TextStyle(color: Colors.white)),
+                  )
+                ]),
+                maxHeight,
+                Text("Contact details", style: bigHeader),
+                minHeight,
+                CustomContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: [
+                        _buildTextField(
+                          controller: _addressController,
+                          label: 'Address',
+                        ),
+                        minHeight,
+                        _buildTextField(
+                          controller: _emailController,
+                          label: 'Email ',
+                        ),
+                        minHeight,
+                        _buildTextField(
+                          controller: _phoneController,
+                          label: 'Phone number',
+                        ),
+                      ],
                     ),
                   ),
-                  child: const Text('Add Work',
-                      style: TextStyle(color: Colors.white)),
                 ),
-                const SizedBox(height: 24),
-                Text("Contact details", style: theme.textTheme.titleLarge),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  controller: _addressController,
-                  label: 'Address',
-                  hintText: 'Enter address',
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _emailController,
-                  label: 'Email ',
-                  hintText: 'Enter email',
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _phoneController,
-                  label: 'Phone number',
-                  hintText: 'Enter phone number',
-                ),
-                const SizedBox(height: 24),
+                maxHeight,
                 Text("Skiils", style: theme.textTheme.titleLarge),
-                const SizedBox(height: 12),
+                minHeight,
                 Wrap(
                   spacing: 8.0,
                   runSpacing: 8.0,
@@ -226,8 +287,8 @@ class FormsScreenState extends State<FormsScreen> {
                           }
                         });
                       },
-                      selectedColor: theme.primaryColor,
-                      backgroundColor: Colors.grey[200],
+                      selectedColor: Colors.black,
+                      backgroundColor: Color(0xFFF5F5F5),
                     );
                   }).toList(),
                 ),
@@ -247,20 +308,33 @@ class FormsScreenState extends State<FormsScreen> {
                             .asMap()
                             .entries
                             .map((entry) => {
-                                  // 'image': entry.value['image'],
-                                  'title':
+                                  'company name': _companyControllers[entry.key]
+                                      .text
+                                      .trim(),
+                                  'job title':
                                       _titleControllers[entry.key].text.trim(),
-                                  'description':
+                                  'job description':
                                       _descriptionControllers[entry.key]
                                           .text
                                           .trim(),
+                                })
+                            .toList(),
+                        'education': _education
+                            .asMap()
+                            .entries
+                            .map((entry) => {
+                                  'school name':
+                                      _schoolControllers[entry.key].text.trim(),
+                                  'programme': _programmeControllers[entry.key]
+                                      .text
+                                      .trim(),
                                 })
                             .toList(),
                         'profileImage': _profileImage,
                       };
 
                       try {
-                        // Show loading indicator
+                      
                         showDialog(
                           context: context,
                           barrierDismissible: false,
@@ -268,10 +342,9 @@ class FormsScreenState extends State<FormsScreen> {
                               const Center(child: CircularProgressIndicator()),
                         );
 
-                        // Fetch AI response
+                       
                         String organizedText = await callGeminiAI(formData);
 
-                        // Close loading indicator
                         if (context.mounted) Navigator.pop(context);
 
                         // Navigate to Markdown Preview Screen
@@ -297,7 +370,7 @@ class FormsScreenState extends State<FormsScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 48),
-                    backgroundColor: theme.primaryColor,
+                    backgroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -318,19 +391,18 @@ class FormsScreenState extends State<FormsScreen> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
-    String? hintText,
     int maxLines = 1,
   }) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        hintText: hintText,
-        border: OutlineInputBorder(
+        border: UnderlineInputBorder(
+          borderSide: BorderSide.none,
           borderRadius: BorderRadius.circular(10),
         ),
         filled: true,
-        fillColor: const Color(0xFFF5F5F5),
+        fillColor: Colors.white,
       ),
       maxLines: maxLines,
       validator: (value) {
@@ -343,38 +415,59 @@ class FormsScreenState extends State<FormsScreen> {
   }
 
   Widget _buildWorkItem(int index) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return CustomContainer(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-
-              _buildTextField(
-              controller: _companyControllers[index],
-              label: 'Company Name',
-              hintText: 'Enter company name',
-            ),
-
+            _buildTextField(
+                controller: _companyControllers[index], label: 'Company Name'),
+            minHeight,
             _buildTextField(
               controller: _titleControllers[index],
               label: 'Job Title',
-              hintText: 'Enter work title',
             ),
-            const SizedBox(height: 12),
+            minHeight,
             _buildTextField(
               controller: _descriptionControllers[index],
               label: 'Job Description',
-              hintText: 'Enter work description',
               maxLines: 2,
             ),
-            const SizedBox(height: 8),
+            minHeight,
             Align(
               alignment: Alignment.centerRight,
               child: IconButton(
                 onPressed: () => _removeWork(index),
-                icon: const Icon(Icons.delete, color: Colors.red),
+                icon: const Icon(Iconsax.trash, color: Colors.red),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEducationItem(int index) {
+    return CustomContainer(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            _buildTextField(
+              controller: _schoolControllers[index],
+              label: 'Name of school',
+            ),
+            minHeight,
+            _buildTextField(
+              controller: _programmeControllers[index],
+              label: 'Programme of study',
+            ),
+            minHeight,
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                onPressed: () => _removeWork(index),
+                icon: Icon(Iconsax.trash, color: Colors.red),
               ),
             ),
           ],

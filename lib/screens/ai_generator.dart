@@ -18,6 +18,8 @@ Future<String> callGeminiAI(Map<String, dynamic> formData) async {
   Languages and Tools: ${formData['languages'].join(', ')}
   Working Experience:
   ${formData['works'].map((work) => '-  ${work['company name']}: ${work['job title']}: ${work['job description']}').join('\n')}
+  Education:
+  ${formData['education'].map((education) => '-  ${education['school name']}: ${education['programme']}').join('\n')}
   ''';
 
   final response = await http.post(

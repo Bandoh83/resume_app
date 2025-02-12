@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:htmltopdfwidgets/htmltopdfwidgets.dart' as pdf;
 import 'package:printing/printing.dart';
-import 'package:pdf/widgets.dart' as pw;
+
 
 class MarkdownPreviewScreen extends StatefulWidget {
   final String markdownText;
@@ -29,29 +31,18 @@ class MarkdownPreviewScreenState extends State<MarkdownPreviewScreen> {
     super.dispose();
   }
 
-  final String markdownText = '''
-   $Markdown
-  ''';
-
-
   Future<void> _generatePdf(BuildContext context) async {
-  
-    final pdf = pw.Document();
+    final List<pdf.Widget> markdownWidgets =
+        await pdf.HTMLToPdf().convertMarkdown(_controller.text);
+    final markdownPdf = pdf.Document();
+    markdownPdf.addPage(pdf.MultiPage(
+      build: (context) => markdownWidgets,
+    ));
 
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Text(
-              widget.markdownText,
-              style: pw.TextStyle(fontSize: 16),
-            ),
-          );
-        },
-      ),
-    );
 
-    await Printing.sharePdf(bytes: await pdf.save(), filename: 'markdown.pdf');
+    //await Printing.sharePdf(bytes: await markdownPdf.save(), filename: 'resume.pdf');
+
+   await File('markdown_example.pdf').writeAsBytes(await markdownPdf.save());
   }
 
   @override
@@ -69,7 +60,7 @@ class MarkdownPreviewScreenState extends State<MarkdownPreviewScreen> {
             },
           ),
           IconButton(
-              icon: Icon(Iconsax.document_download4),
+              icon: Icon(Iconsax.document_download),
               onPressed: () => _generatePdf(context)),
         ],
       ),
