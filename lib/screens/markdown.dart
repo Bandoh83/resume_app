@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:htmltopdfwidgets/htmltopdfwidgets.dart' as pdf;
-import 'package:printing/printing.dart';
 
 
 class MarkdownPreviewScreen extends StatefulWidget {
@@ -49,10 +48,10 @@ class MarkdownPreviewScreenState extends State<MarkdownPreviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Markdown Preview"),
+        title: const Text("Resume Preview"),
         actions: [
           IconButton(
-            icon: Icon(_isEditing ? Icons.visibility : Icons.edit),
+            icon: Icon(_isEditing ? Iconsax.eye : Iconsax.edit_2),
             onPressed: () {
               setState(() {
                 _isEditing = !_isEditing;
@@ -60,7 +59,7 @@ class MarkdownPreviewScreenState extends State<MarkdownPreviewScreen> {
             },
           ),
           IconButton(
-              icon: Icon(Iconsax.document_download),
+              icon: Icon(Iconsax.import),
               onPressed: () => _generatePdf(context)),
         ],
       ),

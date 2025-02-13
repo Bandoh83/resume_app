@@ -25,6 +25,8 @@ class FormsScreenState extends State<FormsScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _jobDescriptionController =
+      TextEditingController();
 
   File? _profileImage;
   final List<Map<String, dynamic>> _works = [];
@@ -39,7 +41,7 @@ class FormsScreenState extends State<FormsScreen> {
     "Microsft Suite",
     "HTML & CSS",
     "Git",
-    "WordPress" ,
+    "WordPress",
     "Adobe photoshop",
     "MySQL",
   ];
@@ -265,7 +267,7 @@ class FormsScreenState extends State<FormsScreen> {
                   ),
                 ),
                 maxHeight,
-                Text("Skiils", style: theme.textTheme.titleLarge),
+                Text("Skiils", style: bigHeader),
                 minHeight,
                 Wrap(
                   spacing: 8.0,
@@ -292,6 +294,26 @@ class FormsScreenState extends State<FormsScreen> {
                     );
                   }).toList(),
                 ),
+
+                maxHeight,
+
+
+                Text("Job description (optional)", style: bigHeader),
+                minHeight,
+                CustomContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: [
+                _buildTextField(
+                  controller: _jobDescriptionController,
+                  label: 'Input job description here',
+                  maxLines: 3,
+                ),
+                      ]
+                    )
+                  ),
+                ),
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () async {
@@ -304,6 +326,8 @@ class FormsScreenState extends State<FormsScreen> {
                         'email': _emailController.text.trim(),
                         'phone': _phoneController.text.trim(),
                         'languages': _selectedTools ?? [],
+                        'job description':
+                            _jobDescriptionController.text.trim(),
                         'works': _works
                             .asMap()
                             .entries
@@ -313,7 +337,7 @@ class FormsScreenState extends State<FormsScreen> {
                                       .trim(),
                                   'job title':
                                       _titleControllers[entry.key].text.trim(),
-                                  'job description':
+                                  'description':
                                       _descriptionControllers[entry.key]
                                           .text
                                           .trim(),
@@ -334,7 +358,6 @@ class FormsScreenState extends State<FormsScreen> {
                       };
 
                       try {
-                      
                         showDialog(
                           context: context,
                           barrierDismissible: false,
@@ -342,7 +365,6 @@ class FormsScreenState extends State<FormsScreen> {
                               const Center(child: CircularProgressIndicator()),
                         );
 
-                       
                         String organizedText = await callGeminiAI(formData);
 
                         if (context.mounted) Navigator.pop(context);
@@ -359,8 +381,7 @@ class FormsScreenState extends State<FormsScreen> {
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          Navigator.pop(
-                              context); // Ensure loading is closed before error
+                          Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Error: $e')),
                           );
