@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:ionicons/ionicons.dart';
-import 'package:portfolio_app/screens/ai_generator.dart';
-import 'package:portfolio_app/screens/constant.dart';
-import 'package:portfolio_app/screens/custom_container.dart';
+import 'package:portfolio_app/models/ai_generator.dart';
+import 'package:portfolio_app/widgets/constant.dart';
+import 'package:portfolio_app/widgets/custom_container.dart';
 import 'package:portfolio_app/screens/markdown.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -118,15 +118,21 @@ class FormsScreenState extends State<FormsScreen> {
   void _removeWork(int index) {
     setState(() {
       _works.removeAt(index);
-      _education.removeAt(index);
       _titleControllers[index].dispose();
       _descriptionControllers[index].dispose();
       _companyControllers[index].dispose();
-      _schoolControllers[index].dispose();
-      _programmeControllers[index].dispose();
       _titleControllers.removeAt(index);
       _descriptionControllers.removeAt(index);
       _companyControllers.removeAt(index);
+
+    });
+  }
+
+  void _removeEducation(int index) {
+    setState(() {
+      _education.removeAt(index);
+      _schoolControllers[index].dispose();
+      _programmeControllers[index].dispose();
       _schoolControllers.removeAt(index);
       _programmeControllers.removeAt(index);
     });
@@ -134,7 +140,6 @@ class FormsScreenState extends State<FormsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -222,9 +227,11 @@ class FormsScreenState extends State<FormsScreen> {
                 maxHeight,
                 Text("Education background", style: bigHeader),
                 minHeight,
-                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end, 
+                  children: [
                   ..._education.asMap().entries.map((entry) {
-                    int index = entry.key;
+                    int index = entry.key;  
                     return _buildEducationItem(index);
                   }),
                   minHeight,
@@ -325,7 +332,7 @@ class FormsScreenState extends State<FormsScreen> {
                         'address': _addressController.text.trim(),
                         'email': _emailController.text.trim(),
                         'phone': _phoneController.text.trim(),
-                        'languages': _selectedTools ?? [],
+                        'languages': _selectedTools,
                         'job description':
                             _jobDescriptionController.text.trim(),
                         'works': _works
@@ -383,7 +390,7 @@ class FormsScreenState extends State<FormsScreen> {
                         if (context.mounted) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Error: $e')),
+                            SnackBar(content: Text('Error generating AI response')),
                           );
                         }
                       }
@@ -487,7 +494,7 @@ class FormsScreenState extends State<FormsScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: IconButton(
-                onPressed: () => _removeWork(index),
+                onPressed: () => _removeEducation(index),
                 icon: Icon(Iconsax.trash, color: Colors.red),
               ),
             ),
