@@ -1,13 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:ionicons/ionicons.dart';
-import 'package:portfolio_app/models/ai_generator.dart';
-import 'package:portfolio_app/widgets/constant.dart';
 import 'package:portfolio_app/widgets/custom_container.dart';
+import 'package:portfolio_app/widgets/constant.dart';
 import 'package:portfolio_app/screens/markdown.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:portfolio_app/models/ai_generator.dart';
+import 'package:portfolio_app/widgets/edu.dart';
+import 'package:portfolio_app/widgets/work.dart';
+
 
 class FormsScreen extends StatefulWidget {
   const FormsScreen({super.key});
@@ -25,8 +28,7 @@ class FormsScreenState extends State<FormsScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _jobDescriptionController =
-      TextEditingController();
+  final TextEditingController _jobDescriptionController = TextEditingController();
 
   File? _profileImage;
   final List<Map<String, dynamic>> _works = [];
@@ -124,7 +126,6 @@ class FormsScreenState extends State<FormsScreen> {
       _titleControllers.removeAt(index);
       _descriptionControllers.removeAt(index);
       _companyControllers.removeAt(index);
-
     });
   }
 
@@ -143,8 +144,7 @@ class FormsScreenState extends State<FormsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Create Portfolio',
-            style: TextStyle(color: Colors.black)),
+        title: const Text('Create Portfolio', style: TextStyle(color: Colors.black)),
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: Colors.white,
@@ -209,7 +209,13 @@ class FormsScreenState extends State<FormsScreen> {
                 Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                   ..._works.asMap().entries.map((entry) {
                     int index = entry.key;
-                    return _buildWorkItem(index);
+                    return WorkItem(
+                      index: index,
+                      companyController: _companyControllers[index],
+                      titleController: _titleControllers[index],
+                      descriptionController: _descriptionControllers[index],
+                      onRemove: _removeWork,
+                    );
                   }),
                   minHeight,
                   ElevatedButton(
@@ -232,7 +238,12 @@ class FormsScreenState extends State<FormsScreen> {
                   children: [
                   ..._education.asMap().entries.map((entry) {
                     int index = entry.key;  
-                    return _buildEducationItem(index);
+                    return EducationItem(
+                      index: index,
+                      schoolController: _schoolControllers[index],
+                      programmeController: _programmeControllers[index],
+                      onRemove: _removeEducation,
+                    );
                   }),
                   minHeight,
                   ElevatedButton(
@@ -305,22 +316,22 @@ class FormsScreenState extends State<FormsScreen> {
                 maxHeight,
 
 
-                Text("Job description (optional)", style: bigHeader),
-                minHeight,
-                CustomContainer(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      children: [
-                _buildTextField(
-                  controller: _jobDescriptionController,
-                  label: 'Input job description here',
-                  maxLines: 3,
-                ),
-                      ]
-                    )
-                  ),
-                ),
+                // Text("Job description (optional)", style: bigHeader),
+                // minHeight,
+                // CustomContainer(
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(10.0),
+                //     child: Column(
+                //       children: [
+                // _buildTextField(
+                //   controller: _jobDescriptionController,
+                //   label: 'Input job description here',
+                //   maxLines: 3,
+                // ),
+                //       ]
+                //     )
+                //   ),
+                // ),
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () async {
@@ -333,8 +344,7 @@ class FormsScreenState extends State<FormsScreen> {
                         'email': _emailController.text.trim(),
                         'phone': _phoneController.text.trim(),
                         'languages': _selectedTools,
-                        'job description':
-                            _jobDescriptionController.text.trim(),
+                      //  'job description': _jobDescriptionController.text.trim(),
                         'works': _works
                             .asMap()
                             .entries
@@ -390,9 +400,10 @@ class FormsScreenState extends State<FormsScreen> {
                         if (context.mounted) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Error generating AI response')),
+                            SnackBar(content: Text('Error generating AI')),
                           );
                         }
+                        debugPrint('Error: $e');
                       }
                     }
                   },
@@ -439,68 +450,6 @@ class FormsScreenState extends State<FormsScreen> {
         }
         return null;
       },
-    );
-  }
-
-  Widget _buildWorkItem(int index) {
-    return CustomContainer(
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            _buildTextField(
-                controller: _companyControllers[index], label: 'Company Name'),
-            minHeight,
-            _buildTextField(
-              controller: _titleControllers[index],
-              label: 'Job Title',
-            ),
-            minHeight,
-            _buildTextField(
-              controller: _descriptionControllers[index],
-              label: 'Job Description',
-              maxLines: 2,
-            ),
-            minHeight,
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                onPressed: () => _removeWork(index),
-                icon: const Icon(Iconsax.trash, color: Colors.red),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEducationItem(int index) {
-    return CustomContainer(
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            _buildTextField(
-              controller: _schoolControllers[index],
-              label: 'Name of school',
-            ),
-            minHeight,
-            _buildTextField(
-              controller: _programmeControllers[index],
-              label: 'Programme of study',
-            ),
-            minHeight,
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                onPressed: () => _removeEducation(index),
-                icon: Icon(Iconsax.trash, color: Colors.red),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

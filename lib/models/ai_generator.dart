@@ -7,13 +7,9 @@ Future<String> callGeminiAI(Map<String, dynamic> formData) async {
   final apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey';
 
 
-   String jobDescription = formData['job_description'] ?? "No job description provided.";
   String prompt = '''
-  Improve this portfolio data and make it an impressive CV based on the job description given.:
+  Improve this resume data and make it an impressive CV based on the information given to fit the job market:
 
-
-  **Job Description:**  
-  $jobDescription
 
   Name: ${formData['name']}
   Role: ${formData['role']}

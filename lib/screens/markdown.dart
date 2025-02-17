@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:htmltopdfwidgets/htmltopdfwidgets.dart' as pdf;
+import 'package:printing/printing.dart';
 
 
 class MarkdownPreviewScreen extends StatefulWidget {
@@ -39,9 +39,9 @@ class MarkdownPreviewScreenState extends State<MarkdownPreviewScreen> {
     ));
 
 
-    //await Printing.sharePdf(bytes: await markdownPdf.save(), filename: 'resume.pdf');
+    await Printing.sharePdf(bytes: await markdownPdf.save(), filename: 'resume.pdf');
 
-   await File('markdown_example.pdf').writeAsBytes(await markdownPdf.save());
+  //  await File('markdown_example.pdf').writeAsBytes(await markdownPdf.save());
   }
 
   @override
